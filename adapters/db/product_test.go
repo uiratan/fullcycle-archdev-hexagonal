@@ -1,8 +1,12 @@
-package db
+package db_test
 
 import (
 	"database/sql"
 	"log"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/uiratan/fullcycle-archdev-hexagonal/adapters/db"
 )
 
 var Db *sql.DB
@@ -17,7 +21,7 @@ func createTable(db *sql.DB) {
 	table := `CREATE TABLE products (
 		"id" string,
 		"name" string,
-		"pricte" string,
+		"price" string,
 		"status" string
 	);`
 	stmt, err := db.Prepare(table)
@@ -34,4 +38,15 @@ func createProduct(db *sql.DB) {
 		log.Fatal(err.Error())
 	}
 	stmt.Exec()
+}
+
+func TestProductDb_Get(t *testing.T) {
+	setup()
+	defer Db.Close()
+	productDb := db.NewProductDb(Db)
+	product, err := productDb.Get("abc")
+	require.Nil(t, err)
+	require.Equal(t, "Product Test", product.GetName())
+	require.Equal(t, 0.0, product.GetPrice())
+	require.Equal(t, "disabled", product.GetStatus())
 }
