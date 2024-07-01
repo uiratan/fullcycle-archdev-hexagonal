@@ -12,3 +12,7 @@ touch sqlite.db
 sqlite3 sqlite.db
 create table products(id string, name string, price float, status string);
 .tables
+
+cobra-cli
+
+go run main.go http
